@@ -44,17 +44,17 @@ optionsFile = output.strip()
 with open(optionsFile, 'r') as f:
     options = json.loads(f.read())
 
-answers = {}
+values = {}
 
 passedArgs = dict((arg.split('=')[0], arg.split('=')[1]) for arg in args.arg or
         [])
 
-print "Answer selected questions:"
+print "Input arguments for template:"
 for option in filter(
-    lambda option: option["name"].startswith('questions'), options
+    lambda option: option["name"].startswith('arguments'), options
 ):
     if option["name"] in passedArgs:
-        answer = passedArgs[option["name"]]
+        value = passedArgs[option["name"]]
     else:
         while True:
             sys.stdout.write("[%s:%s] - %s%s:" %(
@@ -64,11 +64,11 @@ for option in filter(
                     if "default" in option
                     else ''
             ))
-            answer = raw_input(' ')
+            value = raw_input(' ')
 
-            if not answer:
+            if not value:
                 if "default" in option:
-                    answer = option["default"]
+                    value = option["default"]
                 else:
                     print "Option %s must have a value" %(option["name"],)
                     continue
@@ -78,12 +78,12 @@ for option in filter(
     if option["type"] == 'string':
         pass
     elif option["type"] == 'integer':
-        answer = int(answer)
+        value = int(value)
     elif option["type"] == 'attribute set':
-        answer = json.loads(answer)
+        value = json.loads(value)
     else:
         raise Exception('%s type not supported' %(option["type"],))
 
-    answers[option['name']] = answer
+    values[option['name']] = value
 
-print answers
+print values
